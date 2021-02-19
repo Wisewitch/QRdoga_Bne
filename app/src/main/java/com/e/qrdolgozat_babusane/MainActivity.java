@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 intentIntegrator.setBarcodeImageEnabled(true);
                 intentIntegrator.initiateScan();
             }
+
         });
     }
 
