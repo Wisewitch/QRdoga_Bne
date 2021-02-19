@@ -77,10 +77,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-
+            textResult.setText("QRCode eredmény: " + result.getContents());
             if (writePermissionGranted) {
                 try {
-                    textResult.setText("QRCode eredmény: " + result.getContents());
+
                     Naplozas.kiir(textResult.toString());
                 } catch (IOException e) {
                     Log.d("kiirasi hiba", e.getMessage());
