@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textResult;
     private Button btnScan, btnKiir;
-    private write
+    private boolean writePermissionGranted;
 
 
     @Override
@@ -34,30 +34,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-
-        /* btnKiir.setOnClickListener(new View.OnClickListener() {
-            @Override
-                protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-            IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
-            if (result != null) {
-                Toast.makeText(this, "Kiléptél a scanből", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                textResult.setText("QRCode eredmény: "+ result.getContents());
-            }
-
-            try {
-                Uri url = Uri.parse(result.getContents());
-                Intent intent = new Intent(Intent.ACTION_VIEW, url);
-                startActivity(intent);
-            } catch (Exception exception){
-                Log.d("URI ERROR", exception.toString());
-            }
-
-                    super.onActivityResult(requestCode, resultCode, data);
-
-        });
-*/
 
 
 
@@ -100,14 +76,16 @@ public class MainActivity extends AppCompatActivity {
            btnKiir.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
-            try {
-                textResult.setText("QRCode eredmény: "+ result.getContents());
-                Naplozas.kiir(textResult.toString());
-            } catch (IOException e) {
-                Log.d("kiirasi hiba",e.getMessage());
-                e.printStackTrace();
+            if (writePermissionGranted) {
+                try {
+                    textResult.setText("QRCode eredmény: " + result.getContents());
+                    Naplozas.kiir(textResult.toString());
+                } catch (IOException e) {
+                    Log.d("kiirasi hiba", e.getMessage());
+                    e.printStackTrace();
+                }
             }
         }
     });
