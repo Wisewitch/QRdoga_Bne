@@ -186,8 +186,13 @@ public class MainActivity extends AppCompatActivity {
        btnKiir.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-           //  IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-            textResult.setText("QRCode eredmény: " + result.getContents());
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            String szoveg = result.getContents() + String.format(getString(R.string.gps_format), longitude, latitude );
+            textResult.setText(szoveg);
+            textResult.setText("QRCode eredmény: " + result.getContents()  + "\n" +  "Koordináták: " + "\n" + longitude +
+                    "\n" +  latitude);
+
+
 
             if (writePermissionGranted) {
                 try {

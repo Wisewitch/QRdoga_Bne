@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">QRdolgozat_Babusane</string>
+    <string name="gps_format">Long: %f\nLat: %f</string>
 </resources>
