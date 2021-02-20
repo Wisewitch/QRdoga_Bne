@@ -1,9 +1,13 @@
 package com.e.qrdolgozat_babusane;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -78,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-            textResult.setText("QRCode eredmény: " + result.getContents());
+
             if (writePermissionGranted) {
                 try {
-
+                    textResult.setText("QRCode eredmény: " + result.getContents());
                     Naplozas.kiir(textResult.toString());
                 } catch (IOException e) {
                     Log.d("kiirasi hiba", e.getMessage());
@@ -94,11 +98,42 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-    private void init(){
-            btnKiir = findViewById(R.id.Button_kiir);
-            btnScan = findViewById(R.id.Button_scan);
-            textResult = findViewById(R.id.textViewEredmeny);
+
+
+    private void init() {
+        btnKiir = findViewById(R.id.Button_kiir);
+        btnScan = findViewById(R.id.Button_scan);
+        textResult = findViewById(R.id.textViewEredmeny);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+            writePermissionGranted = true;
+        } else {
+            writePermissionGranted = false;
+            String[] permissions =
+                    {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            ActivityCompat.requestPermissions(this, permissions, 1);
         }
+    }
+
+        @Override
+        public void onRequestPermissionResult ( int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults){
+            // super.onRequestPermissionResult(requestCode, requestCode, grantResults);
+            if (requestCode == 1) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                != PackageManager.PERMISSION_GRANTED) {
+                                     writePermissionGranted = true;       }
+            } else {
+                writePermissionGranted = false;
+            }
+             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
 
-}
