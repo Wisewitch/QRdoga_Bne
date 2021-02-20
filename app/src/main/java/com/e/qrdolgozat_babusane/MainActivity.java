@@ -94,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // nem ír fileba mert ezzel van valami bibi...
             /*@Override
             public void onRequestPermissionResult ( int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults){
