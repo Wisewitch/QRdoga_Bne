@@ -25,11 +25,15 @@ import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.qrcode.encoder.QRCode;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView textResult;
     private Button btnScan, btnKiir;
+
+    private Timer timer;
 
     private boolean writePermissionGranted;
 
@@ -67,9 +71,39 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         textResult.setText("Engedély megadva");
-
-
     }
+
+    @Override
+    protected void onResume() {
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(TimerTick);
+            }
+
+        };
+        timer.schedule(task, 1000, 5000);
+        super.onResume();
+    }
+    private Runnable TimerTick = new Runnable() {
+        @Override
+        public void run() {
+            // Java String.format °%f -  tizedes pontos szám, tört szám, %d egész szám, %s szöveg
+
+            if (writePermissionGranted) {
+                try {
+                    Naplozas.kiir(textResult.toString());
+                } catch (IOException e) {
+                    Log.d("kiirasi hiba", e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+    };
+
 
         @Override
         public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -89,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             Toast.makeText(this, "Kiléptél a scanből", Toast.LENGTH_SHORT).show();
@@ -114,15 +149,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("URI ERROR", exception.toString());
         }
 
-        super.onActivityResult(requestCode, resultCode, data);
-
-
-
 
        btnKiir.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+           //  IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             textResult.setText("QRCode eredmény: " + result.getContents());
 
             if (writePermissionGranted) {
