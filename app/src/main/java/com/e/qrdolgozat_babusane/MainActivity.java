@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -21,10 +23,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.qrcode.encoder.QRCode;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -33,7 +39,8 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textResult;
-    private Button btnScan, btnKiir;
+    private Button btnScan, btnKiir, btnkoordinata;
+    private ImageView ivqrkoord;
 
     private double longitude;
     private double latitude;
@@ -50,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+
+
 
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (writePermissionGranted) {
                 try {
-                    Naplozas.kiir(textResult.toString());
+                    Naplozas.kiir(textResult.toString(),longitude, latitude);
                 } catch (IOException e) {
                     Log.d("kiirasi hiba", e.getMessage());
                     e.printStackTrace();
@@ -157,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (writePermissionGranted) {
                 try {
-                    Naplozas.kiir(textResult.toString());
+                    Naplozas.kiir(textResult.toString(),longitude,latitude);
                 } catch (IOException e) {
                     Log.d("kiirasi hiba", e.getMessage());
                     e.printStackTrace();
@@ -182,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (writePermissionGranted) {
                 try {
-                    Naplozas.kiir(textResult.toString());
+                    Naplozas.kiir(textResult.toString(),longitude,latitude);
                 } catch (IOException e) {
                     Log.d("kiirasi hiba", e.getMessage());
                     e.printStackTrace();
@@ -190,12 +199,40 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     });
+
+       /* btnkoordinata.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                try {
+                    BitMatrix bitMatrix = multiFormatWriter.encode(textResult.getText().toString(),
+                            BarcodeFormat.QR_CODE, 500,500);
+                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                    Bitmap bitmap = BarcodeEncoder.createBitmap(gbitMatrix);
+
+                }catch (WriterException e) {
+                    e.printStackTrace();
+                }
+            }
+        });*/
     }
 
     private void init() {
         btnKiir = findViewById(R.id.Button_kiir);
         btnScan = findViewById(R.id.Button_scan);
         textResult = findViewById(R.id.textViewEredmeny);
+        btnkoordinata = findViewById(R.id.Button_koordinata);
+        ivqrkoord = findViewById(R.id. iv_qrkoord);
+
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+            }
+        };
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED &&

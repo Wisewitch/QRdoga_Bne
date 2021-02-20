@@ -13,12 +13,12 @@ import java.util.Date;
 public class Naplozas {
 
     // csv fileba írja a textview tartalmát
-    public static void kiir(String textResult) throws IOException {
+    public static void kiir(String textResult, double longitude, double latitude) throws IOException {
         Date datum = Calendar.getInstance().getTime();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String formazottDatum = dateFormat.format(datum);
 
-        String content = String.format("%s,%s", textResult,formazottDatum);
+        String content = String.format("%s,%s, %f,%f", textResult,formazottDatum, longitude, latitude);
         String state = Environment.getExternalStorageState();
         if(state.equals(Environment.MEDIA_MOUNTED)) {
             File file = new File(Environment.getExternalStorageDirectory(), "QRcodedogaText.csv");
